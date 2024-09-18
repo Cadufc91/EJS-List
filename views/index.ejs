@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic EJS List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      margin: 0;
+      height: 100vh;
+    }
+    .sidebar {
+      height: auto;
+      background-color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #747474;
+    }
+    .main-content {
+      flex-grow: 2;
+      padding: 50px;
+      background-color: #f0f0f0;
+      overflow-y: auto;
+    }
+    .quantity-input {
+      background-color: #afadad;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      border-top: 1px solid #747474;
+      border-bottom: 1px solid #747474;
+    }
+    .quantity-input input{
+      margin-top: 20px;
+      width: 40%;
+    }
+    .quantity-input input::placeholder{
+      text-align: center;
+    }
+    #quantityWarning {
+      color: red; 
+      display: none;
+      font-size: 0.8em;
+      margin-top: 5px;
+    }
+    #itemList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .item {
+      background-color: #d0d0d0;
+      margin-bottom: 20px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #8a8a8a;
+    }
+    .item-number {
+      background-color: #fff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="quantity-input">
+      <label for="quantity">Quantity</label>
+      <input type="text" id="quantity" name="quantity" min="0" placeholder="Type here">
+      <span id="quantityWarning">Please enter numbers only</span>
+    </div>
+  </div>
+  
+  <div class="main-content">
+    <ul id="itemList"></ul>
+  </div>
+
+  <script>
+    const quantityInput = document.getElementById('quantity');
+    const listContainer = document.getElementById('itemList');
+    const quantityWarning = document.getElementById('quantityWarning');
+
+    quantityInput.addEventListener('input', handleQuantityInput);
+
+    function handleQuantityInput() {
+      const inputValue = this.value;
+      
+      if (!/^\d*$/.test(inputValue)) {
+        showWarning(true);
+        this.value = inputValue.replace(/[^\d]/g, '');
+      } else {
+        showWarning(false);
+        updateList();
+      }
+    }
+
+    function showWarning(show) {
+      quantityWarning.style.display = show ? 'block' : 'none';
+    }
+
+    function updateList() {
+      const quantity = parseInt(quantityInput.value) || 0;
+      
+      listContainer.innerHTML = '';
+      
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < quantity; i++) {
+        const listItem = createListItem(i + 1);
+        fragment.appendChild(listItem);
+      }
+      listContainer.appendChild(fragment);
+    }
+
+    function createListItem(number) {
+      const listItem = document.createElement('li');
+      listItem.className = 'item';
+      listItem.innerHTML = `<span class="item-number">${number}</span>`;
+      return listItem;
+    }
+  </script>
+</body>
+</html>
